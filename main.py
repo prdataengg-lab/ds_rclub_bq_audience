@@ -18,8 +18,8 @@ log = logging.getLogger(__name__)
 MEASUREMENT_ID      = "G-L14XN09NVP"
 API_SECRET          = "gm_r2CY-SM--64FisrZWOQ"
 BQ_PROJECT          = "dsgroup-havas-csa"
-USE_VALIDATION_MODE = ("VALIDATION_MODE", "false").lower() == "true"
-THROTTLE_SECONDS    = float("THROTTLE_SECONDS", "0.05")
+USE_VALIDATION_MODE = "false"
+THROTTLE_SECONDS    = "0.05"
 
 GA4_ENDPOINT       = "https://www.google-analytics.com/mp/collect"
 GA4_VALIDATION_URL = "https://www.google-analytics.com/debug/mp/collect"
