@@ -1,0 +1,54 @@
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+steps:
+# ---------------------------------------------------------
+# 1. Build Docker image
+# ---------------------------------------------------------
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    [
+      'build',
+      '-t',
+      'asia-south2-docker.pkg.dev/$PROJECT_ID/rclub-bq-audience/rclub-bq-audience:$COMMIT_SHA',
+      '.'
+    ]
+  id: Build
+
+# ---------------------------------------------------------
+# 2. Push Docker image
+# ---------------------------------------------------------
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    [
+      'push',
+      'asia-south2-docker.pkg.dev/$PROJECT_ID/rclub-bq-audience/rclub-bq-audience:$COMMIT_SHA'
+    ]
+  id: Push
+
+# ---------------------------------------------------------
+# 3. Deploy Cloud Run Job
+# ---------------------------------------------------------
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args:
+    - 'run'
+    - 'jobs'
+    - 'deploy'
+    - 'rclub-bq-audience-job'
+    - '--image'
+    - 'asia-south2-docker.pkg.dev/$PROJECT_ID/rclub-bq-audience/rclub-bq-audience:$COMMIT_SHA'
+    - '--region'
+    - 'asia-south2'
+    - '--memory'
+    - '1Gi'
+    - '--cpu'
+    - '1'
+    - '--max-retries'
+    - '1'
+    - '--task-timeout'
+    - '3600'
+  id: Deploy
+
+images:
+  - 'asia-south2-docker.pkg.dev/$PROJECT_ID/rclub-bq-audience/rclub-bq-audience:$COMMIT_SHA'
