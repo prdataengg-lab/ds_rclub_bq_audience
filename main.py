@@ -15,8 +15,8 @@ logging.basicConfig(
 )
 log = logging.getLogger(__name__)
 
-MEASUREMENT_ID      = "G-L14XN09NVP"
-API_SECRET          = "gm_r2CY-SM--64FisrZWOQ"
+MEASUREMENT_ID      = "G-V5JJBKWVGX"
+API_SECRET          = "l1lTY3TgR2aA2OUez_jBbw"
 BQ_PROJECT          = "dsgroup-havas-csa"
 USE_VALIDATION_MODE = "false"
 THROTTLE_SECONDS    = float(0.05)
