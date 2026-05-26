@@ -18,7 +18,7 @@ log = logging.getLogger(__name__)
 MEASUREMENT_ID      = "G-V5JJBKWVGX"
 API_SECRET          = "l1lTY3TgR2aA2OUez_jBbw"
 BQ_PROJECT          = "dsgroup-havas-csa"
-USE_VALIDATION_MODE = "false"
+USE_VALIDATION_MODE = false
 THROTTLE_SECONDS    = float(0.05)
 
 GA4_ENDPOINT       = "https://www.google-analytics.com/mp/collect"
@@ -60,6 +60,7 @@ def send_event(session: requests.Session, row: dict, index: int) -> bool:
     user_pseudo_id   = row["user_pseudo_id"]
     ds_group_user_id = row["ds_group_user_id"]
     timestamp_micros = int(datetime.now(timezone.utc).timestamp() * 1_000_000)
+    log.info(f"client_id={user_pseudo_id}")
 
     payload = {
         "client_id":        user_pseudo_id,
