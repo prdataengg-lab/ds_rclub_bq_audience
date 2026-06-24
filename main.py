@@ -49,6 +49,7 @@ def fetch_from_bigquery() -> list[dict]:
         "PageView_30_Test" as event_name,
          
         from base
+        LIMIT 10;
     """
     log.info("Running BQ query...")
     rows = [dict(row) for row in client.query(query).result()]
