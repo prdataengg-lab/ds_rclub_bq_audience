@@ -27,24 +27,28 @@ GA4_ENDPOINT = "https://www.google-analytics.com/mp/collect"
 def fetch_from_bigquery() -> list[dict]:
     client = bigquery.Client(project=BQ_PROJECT)
     query = """
-        WITH base AS (
-            SELECT
-                ds_group_user_id,
-                user_pseudo_id,
-                STRING_AGG(DISTINCT event_name, "||") AS event_name
-            FROM `dsgroup-havas-csa.ga4_silver.slv_events_flat`
-            WHERE stream_id = '13089212357'
-                AND event_name IN ("add_to_cart", "purchase")
-                AND event_date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)
-                                   AND DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)
-            GROUP BY 1, 2
+        with base as(
+        select
+        ds_group_user_id,
+        user_pseudo_id,
+        min(event_date) min_event_date,
+        max(event_date) max_event_date,
+        string_agg(distinct event_name ,"||") event_name
+        FROM `dsgroup-havas-csa.ga4_silver.slv_events_flat` a
+        where stream_id='13089212357'
+        and event_name in ("page_view")
+        and(lower(operating_system) = 'android' or lower(browser) = 'chrome' )
+        and event_date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY)
+                                AND DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)
+         
+        group by 1,2
         )
-        SELECT
-            ds_group_user_id,
-            user_pseudo_id
-        FROM base
-        WHERE event_name NOT LIKE "%purchase%"
-            AND ds_group_user_id IS NOT NULL
+        select
+        ds_group_user_id,
+        user_pseudo_id,
+        "PageView_30_Test" as event_name,
+         
+        from base
     """
     log.info("Running BQ query...")
     rows = [dict(row) for row in client.query(query).result()]
