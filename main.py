@@ -48,8 +48,7 @@ def fetch_from_bigquery() -> list[dict]:
         user_pseudo_id,
         "PageView_30_Test" as event_name,
          
-        from base
-        LIMIT 10;
+        from base;
     """
     log.info("Running BQ query...")
     rows = [dict(row) for row in client.query(query).result()]
