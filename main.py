@@ -16,8 +16,10 @@ logging.basicConfig(
 )
 log = logging.getLogger(__name__)
 
-MEASUREMENT_ID = "G-V5JJBKWVGX"
-API_SECRET = "l1lTY3TgR2aA2OUez_jBbw"
+#MEASUREMENT_ID = "G-QMH9CNVQGE"
+MEASUREMENT_ID = "G-QMH9CNVQGE"
+#API_SECRET = "TE5Pi6m7R5ysJRK1h3APug"
+API_SECRET   = "TE5Pi6m7R5ysJRK1h3APug"
 BQ_PROJECT = "dsgroup-havas-csa"
 THROTTLE_SECONDS = float(0.05)
 
@@ -27,29 +29,25 @@ GA4_ENDPOINT = "https://www.google-analytics.com/mp/collect"
 def fetch_from_bigquery() -> list[dict]:
     client = bigquery.Client(project=BQ_PROJECT)
     query = """
-        with base as(
-        select
+            WITH base AS (
+        SELECT
+            ds_group_user_id,
+            user_pseudo_id
+        FROM `dsgroup-havas-csa.ga4_silver.slv_events_flat`
+        WHERE stream_id = '13077205318'
+            AND event_date >= '2025-12-01'
+            AND user_pseudo_id IS NOT NULL
+            AND ds_group_user_id IS NOT NULL
+            AND (lower(operating_system) = 'android' or lower(browser) = 'chrome' )
+        GROUP BY 1, 2
+    )
+    SELECT
         ds_group_user_id,
         user_pseudo_id,
-        min(event_date) min_event_date,
-        max(event_date) max_event_date,
-        string_agg(distinct event_name ,"||") event_name
-        FROM `dsgroup-havas-csa.ga4_silver.slv_events_flat` a
-        where stream_id='13089212357'
-        and event_name in ("page_view")
-        and(lower(operating_system) = 'android' or lower(browser) = 'chrome' )
-        and event_date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY)
-                                AND DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)
-         
-        group by 1,2
-        )
-        select
-        ds_group_user_id,
-        user_pseudo_id,
-        "PageView_30_Test" as event_name,
-         
-        from base;
-    """
+        'rajnigandha_active_users_test' as event_name
+    FROM base
+    LIMIT 10;
+        """
     log.info("Running BQ query...")
     rows = [dict(row) for row in client.query(query).result()]
     log.info(f"Fetched {len(rows)} rows")
@@ -66,7 +64,7 @@ def send_event(session: requests.Session, row: dict, index: int) -> dict:
         "user_id": ds_group_user_id,
         "timestamp_micros": timestamp_micros,
         "events": [{
-            "name": "PageView_30_Test",
+            "name": "rajnigandha_active_users_test",
             "params": {
                 "engagement_time_msec": 100
             }
