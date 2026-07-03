@@ -71,7 +71,7 @@ def send_event(session: requests.Session, row: dict, index: int) -> dict:
         "user_id": ds_group_user_id,
         "timestamp_micros": timestamp_micros,
         "events": [{
-            "name": "R-Club-Android-chrome-test",
+            "name": "R-Club-Windows-chrome-test",
             "params": {
                 "engagement_time_msec": 100
             }
