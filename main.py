@@ -48,7 +48,7 @@ def fetch_from_bigquery() -> list[dict]:
             user_pseudo_id,
             'R-Club-Android-chrome-test' as event_name
         FROM base
-        limit 1)
+        limit 100)
          
         select
         *
