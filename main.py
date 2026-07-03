@@ -38,7 +38,7 @@ def fetch_from_bigquery() -> list[dict]:
                 AND event_date >= '2025-12-01'
                 AND user_pseudo_id IS NOT NULL
                 AND ds_group_user_id IS NOT NULL
-                AND (lower(operating_system) = 'ios' and lower(browser) = 'safari' )
+                AND (lower(operating_system) = 'windows' and lower(browser) = 'edge' )
             GROUP BY 1, 2
         ),
         final_veiw as (
@@ -46,7 +46,7 @@ def fetch_from_bigquery() -> list[dict]:
             distinct
             ds_group_user_id,
             user_pseudo_id,
-            'R-Club-IOS-safari-test' as event_name
+            'R-Club-windows-edge-test' as event_name
         FROM base
         limit 100)
          
@@ -71,7 +71,7 @@ def send_event(session: requests.Session, row: dict, index: int) -> dict:
         "user_id": ds_group_user_id,
         "timestamp_micros": timestamp_micros,
         "events": [{
-            "name": "R-Club-IOS-safari-test",
+            "name": "R-Club-windows-edge-test",
             "params": {
                 "engagement_time_msec": 100
             }
