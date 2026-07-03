@@ -17,9 +17,9 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 #MEASUREMENT_ID = "G-QMH9CNVQGE"
-MEASUREMENT_ID = "G-QMH9CNVQGE"
+MEASUREMENT_ID = "G-V5JJBKWVGX"
 #API_SECRET = "TE5Pi6m7R5ysJRK1h3APug"
-API_SECRET   = "TE5Pi6m7R5ysJRK1h3APug"
+API_SECRET   = "l1lTY3TgR2aA2OUez_jBbw"
 BQ_PROJECT = "dsgroup-havas-csa"
 THROTTLE_SECONDS = float(0.05)
 
@@ -34,18 +34,26 @@ def fetch_from_bigquery() -> list[dict]:
             ds_group_user_id,
             user_pseudo_id
         FROM `dsgroup-havas-csa.ga4_silver.slv_events_flat`
-        WHERE stream_id = '13077205318'
+        WHERE stream_id = '13089212357'
             AND event_date >= '2025-12-01'
             AND user_pseudo_id IS NOT NULL
             AND ds_group_user_id IS NOT NULL
-            AND (lower(operating_system) = 'android' or lower(browser) = 'chrome' )
+            AND (lower(operating_system) = 'android' and lower(browser) = 'chrome' )
         GROUP BY 1, 2
-    )
-    SELECT
-        ds_group_user_id,
-        user_pseudo_id,
-        'rajnigandha_active_users_test' as event_name
-    FROM base;
+        ),
+        final_veiw as (
+        SELECT
+            distinct
+            ds_group_user_id,
+            user_pseudo_id,
+            'R-Club-Android-chrome-test' as event_name
+        FROM base
+        limit 1)
+         
+        select
+        *
+        from
+        final_veiw;
         """
     log.info("Running BQ query...")
     rows = [dict(row) for row in client.query(query).result()]
@@ -63,7 +71,7 @@ def send_event(session: requests.Session, row: dict, index: int) -> dict:
         "user_id": ds_group_user_id,
         "timestamp_micros": timestamp_micros,
         "events": [{
-            "name": "rajnigandha_active_users_test",
+            "name": "R-Club-Android-chrome-test",
             "params": {
                 "engagement_time_msec": 100
             }
