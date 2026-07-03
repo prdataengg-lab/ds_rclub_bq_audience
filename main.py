@@ -29,31 +29,31 @@ GA4_ENDPOINT = "https://www.google-analytics.com/mp/collect"
 def fetch_from_bigquery() -> list[dict]:
     client = bigquery.Client(project=BQ_PROJECT)
     query = """
-            WITH base AS (
-        SELECT
-            ds_group_user_id,
-            user_pseudo_id
-        FROM `dsgroup-havas-csa.ga4_silver.slv_events_flat`
-        WHERE stream_id = '13089212357'
-            AND event_date >= '2025-12-01'
-            AND user_pseudo_id IS NOT NULL
-            AND ds_group_user_id IS NOT NULL
-            AND (lower(operating_system) = 'android' and lower(browser) = 'chrome' )
-        GROUP BY 1, 2
+           WITH base AS (
+            SELECT
+                ds_group_user_id,
+                user_pseudo_id
+            FROM `dsgroup-havas-csa.ga4_silver.slv_events_flat`
+            WHERE stream_id = '13089212357'
+                AND event_date >= '2025-12-01'
+                AND user_pseudo_id IS NOT NULL
+                AND ds_group_user_id IS NOT NULL
+                AND (lower(operating_system) = 'windows' and lower(browser) = 'chrome' )
+            GROUP BY 1, 2
         ),
         final_veiw as (
         SELECT
             distinct
             ds_group_user_id,
             user_pseudo_id,
-            'R-Club-Android-chrome-test' as event_name
+            'R-Club-Windows-chrome-test' as event_name
         FROM base
         limit 100)
          
         select
         *
         from
-        final_veiw;
+        final_veiw
         """
     log.info("Running BQ query...")
     rows = [dict(row) for row in client.query(query).result()]
