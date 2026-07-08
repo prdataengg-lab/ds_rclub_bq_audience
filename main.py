@@ -38,7 +38,7 @@ def fetch_from_bigquery() -> list[dict]:
                 AND event_date >= '2025-12-01'
                 AND user_pseudo_id IS NOT NULL
                 AND ds_group_user_id IS NOT NULL
-                AND (lower(operating_system) = 'windows' and lower(browser) = 'chrome' )
+                AND (lower(operating_system) = 'ios' and lower(browser) = 'safari' )
             GROUP BY 1, 2
         ),
         final_veiw as (
@@ -46,7 +46,7 @@ def fetch_from_bigquery() -> list[dict]:
             distinct
             ds_group_user_id,
             user_pseudo_id,
-            'R_Club_Windows_Chrome_Test' as event_name
+            'R_Club_IOS_Safari_Test' as event_name
         FROM base
         limit 100)
         
