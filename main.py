@@ -5,6 +5,7 @@ import time
 import logging
 from datetime import datetime, timezone
 from collections import defaultdict
+import random
 
 import requests
 from google.cloud import bigquery
@@ -16,9 +17,8 @@ logging.basicConfig(
 )
 log = logging.getLogger(__name__)
 
-#MEASUREMENT_ID = "G-QMH9CNVQGE"
+
 MEASUREMENT_ID = "G-V5JJBKWVGX"
-#API_SECRET = "TE5Pi6m7R5ysJRK1h3APug"
 API_SECRET   = "l1lTY3TgR2aA2OUez_jBbw"
 BQ_PROJECT = "dsgroup-havas-csa"
 THROTTLE_SECONDS = float(0.05)
@@ -46,9 +46,9 @@ def fetch_from_bigquery() -> list[dict]:
             distinct
             ds_group_user_id,
             user_pseudo_id,
-            'R-Club-Android-chrome-test' as event_name
+            'R_Club_Android_Chrome_Test' as event_name
         FROM base
-        limit 1000)
+        limit 100)
         
         select
         *
@@ -64,16 +64,20 @@ def fetch_from_bigquery() -> list[dict]:
 def send_event(session: requests.Session, row: dict, index: int) -> dict:
     user_pseudo_id = row["user_pseudo_id"]
     ds_group_user_id = str(row["ds_group_user_id"])
+    event_name       = row["event_name"]
     timestamp_micros = int(datetime.now(timezone.utc).timestamp() * 1_000_000)
+    session_id       = str(random.randint(1000000000, 9999999999))
 
     payload = {
         "client_id": user_pseudo_id,
         "user_id": ds_group_user_id,
         "timestamp_micros": timestamp_micros,
         "events": [{
-            "name": "R-Club-Android-chrome-test",
+            "name": event_name,
             "params": {
-                "engagement_time_msec": 100
+                "engagement_time_msec": 100,
+                "session_id": session_id,
+                "session_engaged": "1"
             }
         }]
     }
