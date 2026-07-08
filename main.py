@@ -29,7 +29,7 @@ GA4_ENDPOINT = "https://www.google-analytics.com/mp/collect"
 def fetch_from_bigquery() -> list[dict]:
     client = bigquery.Client(project=BQ_PROJECT)
     query = """
-           WITH base AS (
+                WITH base AS (
             SELECT
                 ds_group_user_id,
                 user_pseudo_id
@@ -38,7 +38,7 @@ def fetch_from_bigquery() -> list[dict]:
                 AND event_date >= '2025-12-01'
                 AND user_pseudo_id IS NOT NULL
                 AND ds_group_user_id IS NOT NULL
-                AND (lower(operating_system) = 'windows' and lower(browser) = 'edge' )
+                AND (lower(operating_system) = 'android' and lower(browser) = 'chrome' )
             GROUP BY 1, 2
         ),
         final_veiw as (
@@ -46,10 +46,10 @@ def fetch_from_bigquery() -> list[dict]:
             distinct
             ds_group_user_id,
             user_pseudo_id,
-            'R-Club-windows-edge-test' as event_name
+            'R-Club-Android-chrome-test' as event_name
         FROM base
         limit 100)
-         
+        
         select
         *
         from
@@ -71,7 +71,7 @@ def send_event(session: requests.Session, row: dict, index: int) -> dict:
         "user_id": ds_group_user_id,
         "timestamp_micros": timestamp_micros,
         "events": [{
-            "name": "R-Club-windows-edge-test",
+            "name": "R-Club-Android-chrome-test",
             "params": {
                 "engagement_time_msec": 100
             }
