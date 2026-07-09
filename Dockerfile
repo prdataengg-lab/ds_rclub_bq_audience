@@ -7,4 +7,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY main.py .
 
-CMD ["python", "main.py"]   # just runs and exits — no port binding
+CMD ["python", "main_v1.py"]   # just runs and exits — no port binding
