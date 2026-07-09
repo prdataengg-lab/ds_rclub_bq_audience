@@ -1,18 +1,3 @@
-"""
-GA4 Measurement Protocol event pusher (multi-brand).
-
-Brand configs live in ./configs/<brand>.json; each config contains its own
-SQL query (as a JSON array of lines) plus all GA4/BigQuery settings.
-The GA4 API secret is fetched from GCP Secret Manager at runtime
-(config key: ga4.api_secret_name). All settings come from the config file
-only — no environment variable overrides.
-
-Usage:
-    python ga4_event_pusher.py --brand rclub
-    python ga4_event_pusher.py --brand rajnigandha
-    python ga4_event_pusher.py --config path/to/custom.json   # explicit file
-"""
-
 import sys
 import json
 import time
@@ -266,8 +251,7 @@ def print_summary(results: list[dict], start_time: datetime, brand: str):
 def main():
     parser = argparse.ArgumentParser(description="Push GA4 Measurement Protocol events from BigQuery")
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("--brand", choices=available_brands() or None,
-                       help="Brand to run (loads configs/<brand>.json)")
+    group.add_argument("--brand", help="Brand to run (loads configs/<brand>.json)")
     group.add_argument("--config", help="Explicit path to a config file (overrides --brand)")
     args = parser.parse_args()
 
