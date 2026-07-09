@@ -1,7 +1,7 @@
 {
   "ga4": {
     "measurement_id": "G-V5JJBKWVGX",
-    "api_secret_name": "projects/dsgroup-havas-csa/secrets/ga4-api-secret-rclub/versions/latest",
+    "api_secret_name": "projects/970164980416/locations/asia-south2/secrets/rclub-api-secret/versions/latest",
     "endpoint": "https://www.google-analytics.com/mp/collect"
   },
   "bigquery": {
