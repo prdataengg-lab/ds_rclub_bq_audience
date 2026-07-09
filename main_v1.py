@@ -29,7 +29,7 @@ from google.cloud import secretmanager
 log = logging.getLogger(__name__)
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-CONFIGS_DIR = SCRIPT_DIR / "configs"
+CONFIGS_DIR = SCRIPT_DIR / "config"
 
 
 # ---------------------------------------------------------------------------
