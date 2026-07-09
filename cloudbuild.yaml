@@ -37,6 +37,8 @@ steps:
       - rajnigandha-audience-job
       - '--image=asia-south2-docker.pkg.dev/$PROJECT_ID/rclub-bq-audience/rclub-bq-audience:$COMMIT_SHA'
       - '--region=asia-south2'
+      - '--service-account=etl-runtime-sa@$PROJECT_ID.iam.gserviceaccount.com'
+      - '--set-env-vars=PYTHONUNBUFFERED=1'
       - '--memory=1Gi'
       - '--cpu=1'
       - '--max-retries=1'
@@ -57,6 +59,8 @@ steps:
       - rclub-audience-job
       - '--image=asia-south2-docker.pkg.dev/$PROJECT_ID/rclub-bq-audience/rclub-bq-audience:$COMMIT_SHA'
       - '--region=asia-south2'
+      - '--service-account=etl-runtime-sa@$PROJECT_ID.iam.gserviceaccount.com'
+      - '--set-env-vars=PYTHONUNBUFFERED=1'
       - '--memory=1Gi'
       - '--cpu=1'
       - '--max-retries=1'

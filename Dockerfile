@@ -7,4 +7,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["python", "main_v1.py"]
+# Use ENTRYPOINT so Cloud Run args append to this base command
+ENTRYPOINT ["python", "main_v1.py"]
