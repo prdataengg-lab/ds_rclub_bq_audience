@@ -1,3 +1,17 @@
+"""
+GA4 Measurement Protocol event pusher (multi-brand).
+
+Brand configs live in ./configs/<brand>.json; each config contains its own
+SQL query (as a JSON array of lines) plus all GA4/BigQuery settings.
+The GA4 API secret is fetched from GCP Secret Manager at runtime
+(config key: ga4.api_secret_name). All settings come from the config file
+only — no environment variable overrides.
+
+Usage:
+    python ga4_event_pusher.py --brand rclub
+    python ga4_event_pusher.py --brand rajnigandha
+    python ga4_event_pusher.py --config path/to/custom.json   # explicit file
+"""
 
 import sys
 import json
@@ -81,14 +95,27 @@ def validate_config(cfg: dict) -> None:
         )
 
 
-def get_api_secret(cfg: dict) -> str:
-    """Fetch the GA4 API secret from GCP Secret Manager (name comes from config)."""
-    secret_name = cfg["ga4"]["api_secret_name"]
-    log.info(f"Fetching GA4 API secret from Secret Manager: {secret_name}")
+def access_gcp_secret(path):
+    if not path:
+        return None
+    if "/versions/" not in path:
+        path = f"{path}/versions/latest"
+    try:
+        client_options = {}
+        if "locations/" in path:
+            location = path.split("/")[3]
+            client_options = {"api_endpoint": f"secretmanager.{location}.rep.googleapis.com"}
 
-    client = secretmanager.SecretManagerServiceClient()
-    response = client.access_secret_version(request={"name": secret_name})
-    return response.payload.data.decode("utf-8").strip()
+        client = secretmanager.SecretManagerServiceClient(client_options=client_options)
+        response = client.access_secret_version(request={"name": path})
+        payload = response.payload.data.decode("utf-8").strip()
+        try:
+            return json.loads(payload)
+        except Exception:
+            return payload
+    except Exception as e:
+        log.error(f"Secret Error: {e}")
+        return None
 
 
 def setup_logging(level: str) -> None:
@@ -251,7 +278,16 @@ def main():
     brand = args.brand or config_path.stem
     log.info(f"Brand={brand} | config={config_path} | event={cfg['event']['name']} | project={cfg['bigquery']['project']}")
 
-    api_secret = get_api_secret(cfg)
+    api_secret = access_gcp_secret(cfg["ga4"]["api_secret_name"])
+    if not api_secret:
+        log.error("Could not fetch GA4 API secret from Secret Manager — aborting.")
+        sys.exit(1)
+    if isinstance(api_secret, dict):
+        # Secret stored as JSON — expect the value under key "api_secret"
+        api_secret = api_secret.get("api_secret")
+        if not api_secret:
+            log.error('Secret payload is JSON but has no "api_secret" key — aborting.')
+            sys.exit(1)
 
     start_time = datetime.now(timezone.utc)
     rows = fetch_from_bigquery(cfg)
