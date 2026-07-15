@@ -32,14 +32,14 @@
     ],
     "query_params": {
       "stream_id": "13089212357",
-      "event_date_from": "2025-12-01",
+      "event_date_from": "2026-04-01",
       "operating_system": "windows",
       "browser": "edge",
       "row_limit": 100
     }
   },
   "event": {
-    "name": "R-Club-windows-edge-test",
+    "name": "R_Club_windows_edge_test",
     "engagement_time_msec": 100
   },
   "run": {
