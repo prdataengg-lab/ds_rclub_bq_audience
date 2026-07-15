@@ -33,13 +33,13 @@
     "query_params": {
       "stream_id": "13089212357",
       "event_date_from": "2026-04-01",
-      "operating_system": "windows",
-      "browser": "edge",
+      "operating_system": "ios",
+      "browser": "safari",
       "row_limit": 100
     }
   },
   "event": {
-    "name": "R_Club_windows_edge_test",
+    "name": "R_Club_IOS_Safari_Test",
     "engagement_time_msec": 100
   },
   "run": {
