@@ -33,13 +33,13 @@
     "query_params": {
       "stream_id": "13089212357",
       "event_date_from": "2026-04-01",
-      "operating_system": "windows",
+      "operating_system": "android",
       "browser": "chrome",
       "row_limit": 100
     }
   },
   "event": {
-    "name": "R_Club_Windows_Chrome_Test",
+    "name": "R_Club_Android_Chrome_Test",
     "engagement_time_msec": 100
   },
   "run": {
